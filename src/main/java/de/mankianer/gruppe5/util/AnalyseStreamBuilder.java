@@ -7,6 +7,7 @@ import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.TreeMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -16,7 +17,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 public class AnalyseStreamBuilder {
 
   private DataStream<String> inPutStream;
-  private HashMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
+  private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
 
   @Getter
   @Setter
@@ -26,7 +27,7 @@ public class AnalyseStreamBuilder {
 
   public AnalyseStreamBuilder(DataStream<String> inPutStream) {
     this.inPutStream = inPutStream;
-    analysenTurnMap = new HashMap<>();
+    analysenTurnMap = new TreeMap<>();
     timeTurnMap = new HashMap<>();
     defaultTime = Time.seconds(15);
   }
