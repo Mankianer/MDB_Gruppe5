@@ -16,7 +16,7 @@ public class Tweet implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private long id;
+	private int id;
 	private String name;
 	private String screen_name;
 	private String location;
@@ -37,8 +37,9 @@ public class Tweet implements Serializable{
 		return analysen = (analysen == null ? new HashMap<String, Analyse>() : analysen);
 	}
 	
-	public Tweet addAnalyse(Analyse analyse) {
+	public Analyse addAnalyse(Analyse analyse) {
+		analyse.setTweetID(id);
 		getAnalysen().put(analyse.getClass().getSimpleName(), analyse);
-		return this;
+		return analyse;
 	}
 }
