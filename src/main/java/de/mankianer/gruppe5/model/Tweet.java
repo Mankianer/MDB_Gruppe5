@@ -36,6 +36,16 @@ public class Tweet implements Serializable{
 	private Map<String, Analyse> getAnalysen(){
 		return analysen = (analysen == null ? new HashMap<String, Analyse>() : analysen);
 	}
+
+	public Tweet reduce(Tweet tweet){
+		if(tweet.getText() == null) {
+			tweet.getAnalysen().forEach((String s, Analyse a) -> addAnalyse(a));
+			return this;
+		}else{
+			getAnalysen().forEach((String s, Analyse a) -> tweet.addAnalyse(a));
+			return tweet;
+		}
+	}
 	
 	public Analyse addAnalyse(Analyse analyse) {
 		analyse.setTweetID(id);

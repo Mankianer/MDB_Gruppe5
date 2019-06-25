@@ -1,24 +1,21 @@
 package de.mankianer.gruppe5;
 
+import de.mankianer.gruppe5.analysis.AnalyseKeySelector;
+import de.mankianer.gruppe5.analysis.AnalyseToTweetMap;
+import de.mankianer.gruppe5.analysis.TweetKeySelector;
 import java.util.Properties;
 
-import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
-import org.apache.flink.streaming.api.windowing.assigners.WindowAssigner;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
-import de.mankianer.gruppe5.analysis.AnalyseReduceFunction;
 import de.mankianer.gruppe5.analysis.LengthAnalyseMapFunction;
 import de.mankianer.gruppe5.analysis.WordCountAnalyseMapFunction;
 import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
-import de.mankianer.gruppe5.model.analyse.WordCountAnalyse;
 import de.mankianer.gruppe5.util.StringToTweetFlatMapFunction;
 import de.mankianer.gruppe5.util.TweetSerializationSchema;
 
@@ -47,18 +44,26 @@ public class TwitterAnalyseStreamStarter {
 //		inputStream.map(new CountMap()).timeWindowAll(Time.seconds(10)).reduce(new ReduceText());
 		
 		// apply the async I/O transformation
-		DataStream<Tweet> tweetInStream = inputStream.flatMap(new StringToTweetFlatMapFunction());
-		tweetInStream.print();
-		
-		SingleOutputStreamOperator<Analyse> lengthAnalyseStream = tweetInStream.map(new LengthAnalyseMapFunction());
-		SingleOutputStreamOperator<Analyse> wordCountAnalyseStream = tweetInStream.map(new WordCountAnalyseMapFunction());
-		
+
+		DataStream<Tweet> tweetInStream = inputStream.flatMap(new StringToTweetFlatMapFunction()); //JSON in Tweets umwandeln
+		tweetInStream.print(); //Testausgabe
+
+		//Analysen für den ersten Analyseschritt
+		DataStream<Analyse> lengthAnalyseStream = tweetInStream.map(new LengthAnalyseMapFunction());
+		DataStream<Analyse> wordCountAnalyseStream = tweetInStream.map(new WordCountAnalyseMapFunction());
+
+		//Analysen zusammen führen
 		DataStream<Analyse> analyseStream = lengthAnalyseStream.union(wordCountAnalyseStream);
-		
-		
-		analyseStream.keyBy("tweetID");
-		
-		tweetInStream.addSink(new FlinkKafkaProducer09<Tweet>("elastic", new TweetSerializationSchema(), propertiesIn));
+
+		//Analysen zum zusammen Führen mit Tweets in Tweets umwandeln
+		DataStream<Tweet> analysenAsTweetStream = analyseStream.keyBy(new AnalyseKeySelector())
+				.map(new AnalyseToTweetMap());
+
+		//Tweets zusammen fassen
+		DataStream<Tweet> outPut = analysenAsTweetStream.keyBy(new TweetKeySelector())
+				.timeWindow(Time.seconds(15)).reduce(Tweet::reduce);
+
+		outPut.addSink(new FlinkKafkaProducer09<Tweet>("elastic", new TweetSerializationSchema(), propertiesIn));
 		
 		
 //		MyTelegramBot myTelegramBot = new MyTelegramBot();
