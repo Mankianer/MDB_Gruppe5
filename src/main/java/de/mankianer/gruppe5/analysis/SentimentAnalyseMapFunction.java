@@ -42,7 +42,7 @@ public class SentimentAnalyseMapFunction implements MapFunction<Tweet, Analyse> 
 
         List<NameValuePair> params = new ArrayList<NameValuePair>(2);
         params.add(new BasicNameValuePair("mode", "tweet"));
-        params.add(new BasicNameValuePair("text", "Hey? How are you?"));
+        params.add(new BasicNameValuePair("text", text));
         httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 
         HttpResponse response = httpclient.execute(httppost);
