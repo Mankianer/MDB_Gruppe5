@@ -84,5 +84,20 @@
 			<artifactId>opennlp-tools</artifactId>
 			<version>1.9.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.aylien.textapi</groupId>
+			<artifactId>client</artifactId>
+			<version>0.6.0</version>
+		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.9</version>
+		</dependency>
 	</dependencies>
 </project>
