@@ -8,6 +8,7 @@ import java.util.Map;
 
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class Tweet implements Serializable{
@@ -26,7 +27,7 @@ public class Tweet implements Serializable{
 	private int statuses_count;
 	
 	private String created_at, romantic_date;
-	
+
 	private String text;
 	private String lang;
 	private boolean is_retweet;
