@@ -16,7 +16,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 public class AnalyseStreamBuilder {
 
-  private DataStream<String> inPutStream;
+  private DataStream<Tweet> inPutStream;
   private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
 
   @Getter
@@ -25,23 +25,25 @@ public class AnalyseStreamBuilder {
 
   private HashMap<Integer, Time> timeTurnMap;
 
-  public AnalyseStreamBuilder(DataStream<String> inPutStream) {
-    this.inPutStream = inPutStream;
-    analysenTurnMap = new TreeMap<>();
-    timeTurnMap = new HashMap<>();
-    defaultTime = Time.seconds(15);
+  public static AnalyseStreamBuilder getOfStringStream(DataStream<String> inPutStream) {
+	  return new AnalyseStreamBuilder(inPutStream.flatMap(new StringToTweetFlatMapFunction()));
+  }
+  
+  public AnalyseStreamBuilder(DataStream<Tweet> inPutStream) {
+	    this.inPutStream = inPutStream;
+		analysenTurnMap = new TreeMap<>();
+	    timeTurnMap = new HashMap<>();
+	    defaultTime = Time.seconds(20);
   }
 
   public DataStream<Tweet> build() {
-    //String in Tweets umwandeln
-    DataStream<Tweet>[] tweetStream = new DataStream[]{
-        inPutStream.flatMap(new StringToTweetFlatMapFunction())};
-
+	DataStream<Tweet>[] tweetStream = new DataStream[] {inPutStream};
+	  
     analysenTurnMap.entrySet().forEach(e -> {
       DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
           e.getValue().toArray(new MapFunction[0])).map(new AnalyseToTweetMap());
 
-      tweetStream[0] = analysenAsTweetStream.keyBy(new TweetKeySelector())
+      tweetStream[0] = analysenAsTweetStream.union(inPutStream).keyBy(new TweetKeySelector())
           .timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
     });
 

@@ -10,7 +10,7 @@ public class WordCountAnalyseMapFunction implements MapFunction<Tweet, Analyse>{
 
 	@Override
 	public Analyse map(Tweet value) throws Exception {
-		return value.addAnalyse(new WordCountAnalyse("" + value.getText().split("\\b[^\\s]+\\b").length));
+		return value.addAnalyse(new WordCountAnalyse(value.getText().split("\\b[^\\s]+\\b").length));
 	}
 
 }

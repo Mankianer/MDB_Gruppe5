@@ -60,7 +60,7 @@ public class TwitterAnalyseStreamStarter {
 				.map(new AnalyseToTweetMap());
 
 		//Tweets zusammen fassen
-		DataStream<Tweet> outPut = analysenAsTweetStream.keyBy(new TweetKeySelector())
+		DataStream<Tweet> outPut = analysenAsTweetStream.union(tweetInStream).keyBy(new TweetKeySelector())
 				.timeWindow(Time.seconds(15)).reduce(Tweet::reduce);
 
 		outPut.addSink(new FlinkKafkaProducer09<Tweet>("elastic", new TweetSerializationSchema(), propertiesIn));

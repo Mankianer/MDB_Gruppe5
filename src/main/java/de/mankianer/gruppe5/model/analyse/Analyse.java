@@ -12,11 +12,11 @@ public class Analyse implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private int tweetID;
+	private long tweetID;
 
-	public Analyse(String result) {
+	public Analyse(Object result) {
 		this.result = result;
 	}
 	
-	private  String result;
+	private Object result;
 }

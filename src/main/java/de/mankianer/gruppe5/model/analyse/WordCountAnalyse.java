@@ -1,9 +1,14 @@
 package de.mankianer.gruppe5.model.analyse;
 
+import lombok.Data;
+
 public class WordCountAnalyse extends Analyse {
 
-	public WordCountAnalyse(String result) {
+	int wordCount;
+	
+	public WordCountAnalyse(int result) {
 		super(result);
+		wordCount = result;
 	}
 
 	/**

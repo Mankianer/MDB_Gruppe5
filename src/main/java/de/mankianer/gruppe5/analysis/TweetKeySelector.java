@@ -4,10 +4,10 @@ import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import org.apache.flink.api.java.functions.KeySelector;
 
-public class TweetKeySelector implements KeySelector<Tweet, Integer> {
+public class TweetKeySelector implements KeySelector<Tweet, Long> {
 
   @Override
-  public Integer getKey(Tweet tweet) throws Exception {
+  public Long getKey(Tweet tweet) throws Exception {
     return tweet.getId();
   }
 }
