@@ -33,7 +33,7 @@ public class FleschAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
         ArrayList<String> words = new ArrayList<>();
         //Berechnen von SL
 
-        try (InputStream modelIn = new FileInputStream("./flesch/en-sent.bin")) {
+        try (InputStream modelIn = new FileInputStream("/home/sysadmin/eclipse-workspace/Gruppe5/src/main/java/de/mankianer/gruppe5/analysis/en-sent.bin")) {
             SentenceModel model = new SentenceModel(modelIn);
             SentenceDetectorME sentenceDetector = new SentenceDetectorME(model);
             sentences = sentenceDetector.sentDetect(text);
@@ -69,6 +69,8 @@ public class FleschAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
 
     private int countSyllablesWrapper(String word)
     {
+    	if(word.length() == 0) return 0;
+    	
         int count = 0;
         word = word.toLowerCase();
 

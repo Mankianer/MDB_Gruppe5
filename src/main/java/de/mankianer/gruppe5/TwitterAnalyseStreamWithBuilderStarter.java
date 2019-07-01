@@ -3,6 +3,8 @@ package de.mankianer.gruppe5;
 import de.mankianer.gruppe5.analyse.chartypecount.CharCountAnalyseBuilder;
 import de.mankianer.gruppe5.analysis.AnalyseKeySelector;
 import de.mankianer.gruppe5.analysis.AnalyseToTweetMap;
+import de.mankianer.gruppe5.analysis.CharCountAnalyseMapFunction;
+import de.mankianer.gruppe5.analysis.FleschAnalyseMapFunction;
 import de.mankianer.gruppe5.analysis.LengthAnalyseMapFunction;
 import de.mankianer.gruppe5.analysis.TweetKeySelector;
 import de.mankianer.gruppe5.analysis.WordCountAnalyseMapFunction;
@@ -41,9 +43,9 @@ public class TwitterAnalyseStreamWithBuilderStarter {
 
     AnalyseStreamBuilder analyseStreamBuilder = AnalyseStreamBuilder.getOfStringStream(inputStream);
 
-    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction());
+    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new FleschAnalyseMapFunction(), new CharCountAnalyseMapFunction());
     
-    analyseStreamBuilder = new AnalyseStreamBuilder(CharCountAnalyseBuilder.build(analyseStreamBuilder.build(), Time.seconds(5)));
+//    analyseStreamBuilder = new AnalyseStreamBuilder(CharCountAnalyseBuilder.build(analyseStreamBuilder.build(), Time.seconds(5)));
     
 
     analyseStreamBuilder.build().addSink(new FlinkKafkaProducer09<Tweet>("elastic", new TweetSerializationSchema(), propertiesIn));
