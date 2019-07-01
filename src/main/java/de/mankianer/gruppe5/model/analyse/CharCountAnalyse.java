@@ -12,6 +12,11 @@ public class CharCountAnalyse extends Analyse{
 
 	private Map<Character, Integer> charCountMap;
 	
+	public CharCountAnalyse(Map<Character, Integer> charCountMap) {
+		super(1337);
+		this.charCountMap = charCountMap;
+	}
+	
 	public CharCountAnalyse(Tuple3<Character, Integer, Long> result) {
 		super(0);
 		charCountMap = new HashMap<Character, Integer>();

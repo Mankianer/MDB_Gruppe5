@@ -18,97 +18,68 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 
 public class AnalyseStreamBuilder {
 
-<<<<<<< HEAD
-  private DataStream<Tweet> inPutStream;
-  private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
-=======
-    private DataStream<String> inPutStream;
-    private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
->>>>>>> a0c252ee49f5a1760206e26395f52683c7161ba9
+	private DataStream<Tweet> inPutStream;
+	private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
 
-    @Getter
-    @Setter
-    private Time defaultTime;
+	@Getter
+	@Setter
+	private Time defaultTime;
 
-    private HashMap<Integer, Time> timeTurnMap;
+	private HashMap<Integer, Time> timeTurnMap;
 
-<<<<<<< HEAD
-  public static AnalyseStreamBuilder getOfStringStream(DataStream<String> inPutStream) {
-	  return new AnalyseStreamBuilder(inPutStream.flatMap(new StringToTweetFlatMapFunction()));
-  }
-  
-  public AnalyseStreamBuilder(DataStream<Tweet> inPutStream) {
-	    this.inPutStream = inPutStream;
+	public static AnalyseStreamBuilder getOfStringStream(DataStream<String> inPutStream) {
+		return new AnalyseStreamBuilder(inPutStream.flatMap(new StringToTweetFlatMapFunction()));
+	}
+
+	public AnalyseStreamBuilder(DataStream<Tweet> inPutStream) {
+		this.inPutStream = inPutStream;
 		analysenTurnMap = new TreeMap<>();
-	    timeTurnMap = new HashMap<>();
-	    defaultTime = Time.seconds(20);
-  }
+		timeTurnMap = new HashMap<>();
+		defaultTime = Time.seconds(20);
+	}
 
-  public DataStream<Tweet> build() {
-	DataStream<Tweet>[] tweetStream = new DataStream[] {inPutStream};
-	  
-    analysenTurnMap.entrySet().forEach(e -> {
-      DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
-          e.getValue().toArray(new MapFunction[0])).map(new AnalyseToTweetMap());
+	public DataStream<Tweet> build() {
+		DataStream<Tweet>[] tweetStream = new DataStream[] { inPutStream };
 
-      tweetStream[0] = analysenAsTweetStream.union(inPutStream).keyBy(new TweetKeySelector())
-          .timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
-    });
-=======
-    public AnalyseStreamBuilder(DataStream<String> inPutStream) {
-        this.inPutStream = inPutStream;
-        analysenTurnMap = new TreeMap<>();
-        timeTurnMap = new HashMap<>();
-        defaultTime = Time.seconds(15);
-    }
+		analysenTurnMap.entrySet().forEach(e -> {
+			DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
+					e.getValue().toArray(new MapFunction[0])).map(new AnalyseToTweetMap());
 
-    public DataStream<Tweet> build() {
-        //String in Tweets umwandeln
-        DataStream<Tweet>[] tweetStream = new DataStream[]{
-                inPutStream.flatMap(new StringToTweetFlatMapFunction())};
+			tweetStream[0] = analysenAsTweetStream.union(inPutStream).keyBy(new TweetKeySelector())
+					.timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
+		});
 
-        analysenTurnMap.entrySet().forEach(e -> {
-            DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
-                    e.getValue().toArray(new MapFunction[0])).map(new AnalyseToTweetMap());
->>>>>>> a0c252ee49f5a1760206e26395f52683c7161ba9
+		return tweetStream[0];
+	}
 
-            tweetStream[0] = analysenAsTweetStream.keyBy(new TweetKeySelector())
-                    .timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
-        });
+	private DataStream<Analyse> addAnalysenToStream(DataStream<Tweet> in, MapFunction<Tweet, Analyse>... analysen) {
+		if (analysen.length > 0) {
 
-        return tweetStream[0];
-    }
+			DataStream<Analyse> ret = in.map(analysen[0]);
+			for (int i = 1; i < analysen.length; i++) {
+				ret = ret.union(in.map(analysen[i]));
+			}
+			return ret;
+		}
+		return in.map(new LengthAnalyseMapFunction());
+	}
 
-    private DataStream<Analyse> addAnalysenToStream(DataStream<Tweet> in,
-                                                    MapFunction<Tweet, Analyse>... analysen) {
-        if (analysen.length > 0) {
+	public AnalyseStreamBuilder setTurnTime(int turn, Time time) {
+		timeTurnMap.put(turn, time);
 
-            DataStream<Analyse> ret = in.map(analysen[0]);
-            for (int i = 1; i < analysen.length; i++) {
-                ret = ret.union(in.map(analysen[i]));
-            }
-            return ret;
-        }
-        return in.map(new LengthAnalyseMapFunction());
-    }
+		return this;
+	}
 
-    public AnalyseStreamBuilder setTurnTime(int turn, Time time) {
-        timeTurnMap.put(turn, time);
+	public AnalyseStreamBuilder addAnalyse(int turn, MapFunction<Tweet, Analyse>... analysen) {
+		for (MapFunction<Tweet, Analyse> analyse : analysen) {
 
-        return this;
-    }
+			if (!analysenTurnMap.containsKey(turn)) {
+				analysenTurnMap.put(turn, new LinkedList<>());
+			}
 
-    public AnalyseStreamBuilder addAnalyse(int turn, MapFunction<Tweet, Analyse>... analysen) {
-        for (MapFunction<Tweet, Analyse> analyse : analysen
-                ) {
+			analysenTurnMap.get(turn).add(analyse);
+		}
 
-            if (!analysenTurnMap.containsKey(turn)) {
-                analysenTurnMap.put(turn, new LinkedList<>());
-            }
-
-            analysenTurnMap.get(turn).add(analyse);
-        }
-
-        return this;
-    }
+		return this;
+	}
 }
