@@ -65,7 +65,11 @@ public class SentimentAnalyseMapFunction implements MapFunction<Tweet, Analyse> 
             }
 
         }
-        Sentiment sent = gson.fromJson(jsonString, Sentiment.class);
-        return tweet.addAnalyse(new SentimentAnalyse(sent.getPolarity()));
+        try {
+        	Sentiment sent = gson.fromJson(jsonString, Sentiment.class);
+        	return tweet.addAnalyse(new SentimentAnalyse(sent.getPolarity()));
+        }catch (Exception e) {
+        	return tweet.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
+		}
     }
 }

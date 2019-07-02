@@ -62,8 +62,11 @@ public class ClassificationMapAnalyse implements MapFunction<Tweet, Analyse> {
 
         }
         System.out.println(jsonString);
-
-        Classification clas = gson.fromJson(jsonString, Classification.class);
-        return value.addAnalyse(new ClassificationAnalyse(clas.getLabelsArr()));
+        try {
+        	Classification clas = gson.fromJson(jsonString, Classification.class);
+        	return value.addAnalyse(new ClassificationAnalyse(clas.getLabelsArr()));
+        }catch (Exception e) {
+        	return value.addAnalyse(new ClassificationAnalyse("Error: "+e.getMessage()));
+		}
     }
 }

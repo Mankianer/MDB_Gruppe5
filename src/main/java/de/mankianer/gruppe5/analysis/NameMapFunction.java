@@ -18,7 +18,7 @@ public class NameMapFunction implements MapFunction<Tweet, Analyse> {
         String text = value.getText();
         ArrayList<String> namesList = new ArrayList<>();
 
-        try (InputStream modelIn = new FileInputStream("en-ner-person.bin")){
+        try (InputStream modelIn = new FileInputStream("/home/sysadmin/eclipse-workspace/Gruppe5/src/main/java/de/mankianer/gruppe5/analysis/en-ner-person.bin")){
             TokenNameFinderModel model = new TokenNameFinderModel(modelIn);
             NameFinderME nameFinder = new NameFinderME(model);
 
@@ -28,7 +28,7 @@ public class NameMapFunction implements MapFunction<Tweet, Analyse> {
             }
         }
 
-        String[] namesArray = (String[]) namesList.toArray();
+        String[] namesArray =namesList.toArray(new String[0]);
         return value.addAnalyse(new NameAnalyse(namesArray));
     }
 }
