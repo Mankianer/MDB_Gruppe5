@@ -1,25 +1,20 @@
 package de.mankianer.gruppe5;
 
-import de.mankianer.gruppe5.analyse.chartypecount.CharCountAnalyseBuilder;
-import de.mankianer.gruppe5.analysis.AnalyseKeySelector;
-import de.mankianer.gruppe5.analysis.AnalyseToTweetMap;
-import de.mankianer.gruppe5.analysis.CharCountAnalyseMapFunction;
-import de.mankianer.gruppe5.analysis.FleschAnalyseMapFunction;
-import de.mankianer.gruppe5.analysis.LengthAnalyseMapFunction;
-import de.mankianer.gruppe5.analysis.TweetKeySelector;
-import de.mankianer.gruppe5.analysis.WordCountAnalyseMapFunction;
-import de.mankianer.gruppe5.model.Tweet;
-import de.mankianer.gruppe5.model.analyse.Analyse;
-import de.mankianer.gruppe5.util.AnalyseStreamBuilder;
-import de.mankianer.gruppe5.util.TweetMapToId;
-import de.mankianer.gruppe5.util.TweetSerializationSchema;
 import java.util.Properties;
+
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer09;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
+
+import de.mankianer.gruppe5.analysis.CharCountAnalyseMapFunction;
+import de.mankianer.gruppe5.analysis.FleschAnalyseMapFunction;
+import de.mankianer.gruppe5.analysis.LengthAnalyseMapFunction;
+import de.mankianer.gruppe5.analysis.WordCountAnalyseMapFunction;
+import de.mankianer.gruppe5.model.Tweet;
+import de.mankianer.gruppe5.util.AnalyseStreamBuilder;
+import de.mankianer.gruppe5.util.TweetSerializationSchema;
 
 public class TwitterAnalyseStreamWithBuilderStarter {
   public static void main(String ...args) throws Exception{
