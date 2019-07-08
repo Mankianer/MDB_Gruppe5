@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import de.mankianer.gruppe5.analyse.entity.Entity;
 import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.*;
-
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.util.Collector;
@@ -70,7 +69,6 @@ public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
         }catch (Exception e) {
             //value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
             //return value.addAnalyse(new PersoAnalyse("Error: " + e.getMessage()));
-
         }
     }
 }
