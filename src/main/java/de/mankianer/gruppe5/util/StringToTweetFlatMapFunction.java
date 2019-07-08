@@ -20,9 +20,12 @@ public class StringToTweetFlatMapFunction implements FlatMapFunction<String, Twe
 	@Override
 	public void flatMap(String value, Collector<Tweet> out) throws Exception {
 		Gson gson = new Gson();
-		Tweet t = gson.fromJson(value, Tweet.class);
-		t.setRomantic_date(LocalDate.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd")));
-		out.collect(t);
+		try {
+			Tweet t = gson.fromJson(value, Tweet.class);
+			t.setRomantic_date(LocalDate.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd")));
+			out.collect(t);
+		}catch (Exception e) {
+		}
 	}
 
 }

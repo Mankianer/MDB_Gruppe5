@@ -65,7 +65,7 @@ public class EntityMapFunction implements MapFunction<Tweet, Analyse> {
             System.out.println(e);
             return value.addAnalyse(new EntityAnalyse(entities));
         }catch (Exception e) {
-            return value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
+            return value.addAnalyse(new EntityAnalyse("Error: " + e.getMessage()));
         }
     }
 }

@@ -13,15 +13,18 @@ import java.util.concurrent.TimeUnit;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 
 public class AnalyseStreamBuilder {
 
 	private DataStream<Tweet> inPutStream;
-	private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
+	private TreeMap<Integer, LinkedList<FlatMapFunction<Tweet, Analyse>>> analysenTurnMap;
 
 	@Getter
 	@Setter
@@ -62,6 +65,7 @@ public class AnalyseStreamBuilder {
 			for (int i = 1; i < analysen.length; i++) {
 				ret = ret.union(in.map(analysen[i]));
 			}
+//			ret.addSink(new FlinkKafkaProducer09<Analysen>("analysen", new AnalysenSerializationSchema(), propertiesIn));
 			return ret;
 		}
 		return in.map(new LengthAnalyseMapFunction());
@@ -73,8 +77,8 @@ public class AnalyseStreamBuilder {
 		return this;
 	}
 
-	public AnalyseStreamBuilder addAnalyse(int turn, MapFunction<Tweet, Analyse>... analysen) {
-		for (MapFunction<Tweet, Analyse> analyse : analysen) {
+	public AnalyseStreamBuilder addAnalyse(int turn, FlatMapFunction<Tweet, Analyse>... analysen) {
+		for (FlatMapFunction<Tweet, Analyse> analyse : analysen) {
 
 			if (!analysenTurnMap.containsKey(turn)) {
 				analysenTurnMap.put(turn, new LinkedList<>());
