@@ -50,9 +50,10 @@ public class TwitterAnalyseStreamWithBuilderStarter {
     AnalyseStreamBuilder analyseStreamBuilder = AnalyseStreamBuilder.getOfStringStream(inputStream);
     
 //    analyseStreamBuilder.setTurnTime(1, Time.seconds(10));
-    analyseStreamBuilder.addAnalyse(1, new WordCountAnalyseMapFunction());
-//    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new NameMapFunction(), new FleschAnalyseMapFunction(), new CharCountAnalyseMapFunction());
-//    analyseStreamBuilder.addAnalyse(1,new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new EntityMapFunction());
+//    analyseStreamBuilder.addAnalyse(1, new WordCountAnalyseMapFunction());
+    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new FleschAnalyseMapFunction());
+    analyseStreamBuilder.addAnalyse(1, new CharCountAnalyseMapFunction());
+    analyseStreamBuilder.addAnalyse(1, new NameMapFunction(),new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new EntityMapFunction());
 //    	analyseStreamBuilder.addAnalyse(1, new LengthAnalyseMapFunction());
 //    analyseStreamBuilder.addAnalyse(2,);
     
@@ -60,7 +61,7 @@ public class TwitterAnalyseStreamWithBuilderStarter {
     
 
     DataStream<Tweet> build = analyseStreamBuilder.build();
-    build.addSink(new FlinkKafkaProducer09<Tweet>("elastic4", new TweetSerializationSchema(), propertiesIn));
+    build.addSink(new FlinkKafkaProducer09<Tweet>("elastic6", new TweetSerializationSchema(), propertiesIn));
     build.flatMap(new TweetToAnalyseFlatMapFunction()).addSink(new FlinkKafkaProducer09<Map<String,Analyse>>("analysen3", new AnalysenSerializationSchema(), propertiesIn));
 	build.addSink(new TelegramFunction());
 

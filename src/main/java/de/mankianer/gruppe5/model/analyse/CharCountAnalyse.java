@@ -10,16 +10,16 @@ import lombok.Getter;
 
 public class CharCountAnalyse extends Analyse{
 
-	private Map<Character, Integer> charCountMap;
+	private Map<String, Integer> charCountMap;
 	
-	public CharCountAnalyse(Map<Character, Integer> charCountMap) {
+	public CharCountAnalyse(Map<String, Integer> charCountMap) {
 		super(1337);
 		this.charCountMap = charCountMap;
 	}
 	
-	public CharCountAnalyse(Tuple3<Character, Integer, Long> result) {
+	public CharCountAnalyse(Tuple3<String, Integer, Long> result) {
 		super(0);
-		charCountMap = new HashMap<Character, Integer>();
+		charCountMap = new HashMap<String, Integer>();
 		charCountMap.put(result.f0, result.f1);
 		setTweetID(result.f2);
 	}

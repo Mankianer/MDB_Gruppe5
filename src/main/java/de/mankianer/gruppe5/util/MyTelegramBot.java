@@ -20,6 +20,11 @@ import com.pengrad.telegrambot.request.SendMessage;
 
 import de.mankianer.gruppe5.model.Tweet;
 
+/**
+ * Bot zur ausgabe von Analyse Strom, für eine Richtige anzeige aller Sonderzeichen und Urls
+ * @author Marvin Wölk
+ *
+ */
 public class MyTelegramBot {
 	
 	private TelegramBot bot;

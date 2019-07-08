@@ -1,0 +1,4 @@
+curl -XDELETE "localhost:9200/elastic/"
+curl -XPUT "localhost:9200/elastic/"
+curl -XPUT "localhost:9200/elastic/_mappings/date" -d '{ "date": { "properties": { "romantic_date": {"type":"date","format":"yyyy-MM-dd"}}}}'
+

@@ -1,0 +1,2 @@
+confluent stop
+confluent start
