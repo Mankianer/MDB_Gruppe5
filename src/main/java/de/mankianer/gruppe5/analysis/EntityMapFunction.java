@@ -7,7 +7,10 @@ import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.EntityAnalyse;
 import de.mankianer.gruppe5.model.analyse.SentimentAnalyse;
+
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.util.Collector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -21,9 +24,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityMapFunction implements MapFunction<Tweet, Analyse> {
+public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
     @Override
-    public Analyse map(Tweet value) throws Exception {
+    public void flatMap(Tweet value, Collector<Analyse> out) throws Exception {
 
         String text = value.getText();
         final String urlString = "https://api.aylien.com/api/v1/entities";
@@ -63,9 +66,8 @@ public class EntityMapFunction implements MapFunction<Tweet, Analyse> {
             Entity e = gson.fromJson(jsonString, Entity.class);
             String[][] entities = {e.entities.location, e.entities.organization, e.entities.person};
             System.out.println(e);
-            return value.addAnalyse(new EntityAnalyse(entities));
+            out.collect(value.addAnalyse(new EntityAnalyse(entities)));
         }catch (Exception e) {
-            return value.addAnalyse(new EntityAnalyse("Error: " + e.getMessage()));
         }
     }
 }

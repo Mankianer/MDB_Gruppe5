@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.SentimentAnalyse;
+
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.util.Collector;
 
 import com.aylien.textapi.TextAPIClient;
 import com.aylien.textapi.parameters.*;
@@ -25,11 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SentimentAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
+public class SentimentAnalyseMapFunction implements FlatMapFunction<Tweet, Analyse> {
     @Override
     //APP ID: f8e5c5f6
     //API Key: d64f781e84f534048acad0cf63a82e94
-    public Analyse map(Tweet tweet) throws Exception {
+    public void flatMap(Tweet tweet,Collector<Analyse> out) throws Exception {
         String text = tweet.getText();
         final String urlString = "https://api.aylien.com/api/v1/sentiment";
 
@@ -66,10 +69,11 @@ public class SentimentAnalyseMapFunction implements MapFunction<Tweet, Analyse> 
 
         }
         try {
-        	Sentiment sent = gson.fromJson(jsonString, Sentiment.class);
-        	return tweet.addAnalyse(new SentimentAnalyse(sent.getPolarity()));
+	    	Sentiment sent = gson.fromJson(jsonString, Sentiment.class);
+	    	out.collect( tweet.addAnalyse(new SentimentAnalyse(sent.getPolarity())));
         }catch (Exception e) {
-        	return tweet.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
+			// TODO: handle exception
 		}
     }
+
 }
