@@ -46,6 +46,8 @@ public class FleschAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
             String[] wordsA = sentence.split("\\W");
             words.addAll(Arrays.asList(wordsA));
         }
+        //TODO test
+        words.removeIf((s) -> s.equals(""));
         wordsCount = words.size();
 
         //SL
