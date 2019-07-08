@@ -50,8 +50,8 @@ public class TwitterAnalyseStreamWithBuilderStarter {
     AnalyseStreamBuilder analyseStreamBuilder = AnalyseStreamBuilder.getOfStringStream(inputStream);
     
 //    analyseStreamBuilder.setTurnTime(1, Time.seconds(10));
-//    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new CharCountAnalyseMapFunction(), new SentimentAnalyseMapFunction());
-//    analyseStreamBuilder.addAnalyse(1,new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new NameMapFunction(), new FleschAnalyseMapFunction(), new EntityMapFunction());
+    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new CharCountAnalyseMapFunction(), new SentimentAnalyseMapFunction());
+    analyseStreamBuilder.addAnalyse(1,new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new NameMapFunction(), new FleschAnalyseMapFunction(), new EntityMapFunction());
 //    	analyseStreamBuilder.addAnalyse(1, new LengthAnalyseMapFunction());
 //    analyseStreamBuilder.addAnalyse(2,);
     

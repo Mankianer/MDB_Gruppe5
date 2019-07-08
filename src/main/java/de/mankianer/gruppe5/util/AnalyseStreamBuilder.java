@@ -24,7 +24,8 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 public class AnalyseStreamBuilder {
 
 	private DataStream<Tweet> inPutStream;
-	private TreeMap<Integer, LinkedList<FlatMapFunction<Tweet, Analyse>>> analysenTurnMap;
+	private TreeMap<Integer, LinkedList<MapFunction<Tweet, Analyse>>> analysenTurnMap;
+	private TreeMap<Integer, LinkedList<FlatMapFunction<Tweet, Analyse>>> analysenTurnMap2;
 
 	@Getter
 	@Setter
@@ -39,6 +40,7 @@ public class AnalyseStreamBuilder {
 	public AnalyseStreamBuilder(DataStream<Tweet> inPutStream) {
 		this.inPutStream = inPutStream;
 		analysenTurnMap = new TreeMap<>();
+		analysenTurnMap2 = new TreeMap<>();
 		timeTurnMap = new HashMap<>();
 		defaultTime = Time.seconds(10);
 	}
@@ -49,6 +51,14 @@ public class AnalyseStreamBuilder {
 		analysenTurnMap.entrySet().forEach(e -> {
 			DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
 					e.getValue().toArray(new MapFunction[0])).map(new AnalyseToTweetMap());
+
+			tweetStream[0] = analysenAsTweetStream.union(inPutStream).keyBy(new TweetKeySelector())
+					.timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
+		});
+		
+		analysenTurnMap2.entrySet().forEach(e -> {
+			DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
+					e.getValue().toArray(new FlatMapFunction[0])).map(new AnalyseToTweetMap());
 
 			tweetStream[0] = analysenAsTweetStream.union(inPutStream).keyBy(new TweetKeySelector())
 					.timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
@@ -70,6 +80,19 @@ public class AnalyseStreamBuilder {
 		}
 		return in.map(new LengthAnalyseMapFunction());
 	}
+	
+	private DataStream<Analyse> addAnalysenToStream(DataStream<Tweet> in, FlatMapFunction<Tweet, Analyse>... analysen) {
+		if (analysen.length > 0) {
+
+			DataStream<Analyse> ret = in.flatMap(analysen[0]);
+			for (int i = 1; i < analysen.length; i++) {
+				ret = ret.union(in.flatMap(analysen[i]));
+			}
+//			ret.addSink(new FlinkKafkaProducer09<Analysen>("analysen", new AnalysenSerializationSchema(), propertiesIn));
+			return ret;
+		}
+		return in.map(new LengthAnalyseMapFunction());
+	}
 
 	public AnalyseStreamBuilder setTurnTime(int turn, Time time) {
 		timeTurnMap.put(turn, time);
@@ -77,14 +100,27 @@ public class AnalyseStreamBuilder {
 		return this;
 	}
 
-	public AnalyseStreamBuilder addAnalyse(int turn, FlatMapFunction<Tweet, Analyse>... analysen) {
-		for (FlatMapFunction<Tweet, Analyse> analyse : analysen) {
+	public AnalyseStreamBuilder addAnalyse(int turn, MapFunction<Tweet, Analyse>... analysen) {
+		for (MapFunction<Tweet, Analyse> analyse : analysen) {
 
 			if (!analysenTurnMap.containsKey(turn)) {
 				analysenTurnMap.put(turn, new LinkedList<>());
 			}
 
 			analysenTurnMap.get(turn).add(analyse);
+		}
+
+		return this;
+	}
+	
+	public AnalyseStreamBuilder addAnalyse(int turn, FlatMapFunction<Tweet, Analyse>... analysen) {
+		for (FlatMapFunction<Tweet, Analyse> analyse : analysen) {
+
+			if (!analysenTurnMap2.containsKey(turn)) {
+				analysenTurnMap2.put(turn, new LinkedList<>());
+			}
+
+			analysenTurnMap2.get(turn).add(analyse);
 		}
 
 		return this;
