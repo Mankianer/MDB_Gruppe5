@@ -17,6 +17,7 @@ import de.mankianer.gruppe5.analysis.SentimentAnalyseMapFunction;
 import de.mankianer.gruppe5.analysis.WordCountAnalyseMapFunction;
 import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.util.AnalyseStreamBuilder;
+import de.mankianer.gruppe5.util.TelegramFunction;
 import de.mankianer.gruppe5.util.TweetSerializationSchema;
 
 public class TwitterAnalyseStreamWithBuilderStarter {
@@ -41,14 +42,16 @@ public class TwitterAnalyseStreamWithBuilderStarter {
 
     AnalyseStreamBuilder analyseStreamBuilder = AnalyseStreamBuilder.getOfStringStream(inputStream);
 
-//    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new FleschAnalyseMapFunction(), new CharCountAnalyseMapFunction(), new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new NameMapFunction());
+    analyseStreamBuilder.addAnalyse(1,new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction(), new FleschAnalyseMapFunction(), new CharCountAnalyseMapFunction(), new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new NameMapFunction());
     analyseStreamBuilder.addAnalyse(1,new SentimentAnalyseMapFunction(), new ClassificationMapAnalyse(), new NameMapFunction(), new CharCountAnalyseMapFunction(), new FleschAnalyseMapFunction(), new LengthAnalyseMapFunction(), new WordCountAnalyseMapFunction());
 //    analyseStreamBuilder.addAnalyse(2,);
     
 //    analyseStreamBuilder = new AnalyseStreamBuilder(CharCountAnalyseBuilder.build(analyseStreamBuilder.build(), Time.seconds(5)));
     
 
-    analyseStreamBuilder.build().addSink(new FlinkKafkaProducer09<Tweet>("elastic", new TweetSerializationSchema(), propertiesIn));
+    DataStream<Tweet> build = analyseStreamBuilder.build();
+	build.addSink(new FlinkKafkaProducer09<Tweet>("elastic", new TweetSerializationSchema(), propertiesIn));
+	build.addSink(new TelegramFunction());
 
     env.execute("Tweet verarbeitung Starten");
 

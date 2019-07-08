@@ -53,8 +53,8 @@ public class TelegramBotStarter {
 //		inputStream.map(new CountMap()).timeWindowAll(Time.seconds(10)).reduce(new ReduceText());
 		
 		// apply the async I/O transformation
-		DataStream<Tuple2<String, String>> resultStream =
-		    AsyncDataStream.unorderedWait(inputStream, new TelegramFunction(), 20000, TimeUnit.MILLISECONDS, 100);
+//		DataStream<Tuple2<String, String>> resultStream =
+//		    AsyncDataStream.unorderedWait(inputStream, new TelegramFunction(), 20000, TimeUnit.MILLISECONDS, 100);
 		
 		
 //		MyTelegramBot myTelegramBot = new MyTelegramBot();
