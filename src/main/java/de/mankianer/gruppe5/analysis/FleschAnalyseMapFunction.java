@@ -77,12 +77,10 @@ public class FleschAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
         word = word.toLowerCase();
 
         if (word.charAt(word.length()-1) == 'e') {
-            if (silente(word)){
-                String newWord = word.substring(0, word.length()-1);
-                count = count + countSyllabes(newWord);
-            } else
+            if (silente(word))
+                count = count + countSyllabes(word.substring(0, word.length()-1));
+            else //the
                 count++;
-
         } else
             count = count + countSyllabes(word);
 
@@ -103,8 +101,8 @@ public class FleschAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
     private boolean silente(String word) {
         word = word.substring(0, word.length()-1);
 
-        Pattern yup = Pattern.compile("[aeiouy]");
-        Matcher m = yup.matcher(word);
+        Pattern pat = Pattern.compile("[aeiouy]");
+        Matcher m = pat.matcher(word);
 
         return m.find();
     }

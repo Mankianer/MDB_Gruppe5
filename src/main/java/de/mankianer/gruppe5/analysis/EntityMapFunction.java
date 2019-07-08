@@ -1,13 +1,16 @@
 package de.mankianer.gruppe5.analysis;
 
-import com.aylien.textapi.responses.Sentiment;
 import com.google.gson.Gson;
 import de.mankianer.gruppe5.analyse.entity.Entity;
 import de.mankianer.gruppe5.model.Tweet;
+<<<<<<< HEAD
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.EntityAnalyse;
 import de.mankianer.gruppe5.model.analyse.SentimentAnalyse;
 
+=======
+import de.mankianer.gruppe5.model.analyse.*;
+>>>>>>> 8ab85099580997087e686b6b1256618687bb8e5a
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.util.Collector;
@@ -22,6 +25,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
@@ -65,9 +69,19 @@ public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
         try {
             Entity e = gson.fromJson(jsonString, Entity.class);
             String[][] entities = {e.entities.location, e.entities.organization, e.entities.person};
+<<<<<<< HEAD
             System.out.println(e);
             out.collect(value.addAnalyse(new EntityAnalyse(entities)));
         }catch (Exception e) {
+=======
+            //System.out.println(Arrays.deepToString(entities));
+            out.collect(value.addAnalyse(new PersonAnalyse(e.entities.person)));
+            out.collect(value.addAnalyse(new LocationAnalyse(e.entities.location)));
+            out.collect(value.addAnalyse(new OrganizationAnalyse(e.entities.organization)));
+        }catch (Exception e) {
+            //value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
+            //return value.addAnalyse(new PersoAnalyse("Error: " + e.getMessage()));
+>>>>>>> 8ab85099580997087e686b6b1256618687bb8e5a
         }
     }
 }
