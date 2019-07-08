@@ -63,9 +63,12 @@ public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
             Entity e = gson.fromJson(jsonString, Entity.class);
             String[][] entities = {e.entities.location, e.entities.organization, e.entities.person};
             //System.out.println(Arrays.deepToString(entities));
-            out.collect(value.addAnalyse(new PersonAnalyse(e.entities.person)));
+            if(e.entities.person != null)
+                out.collect(value.addAnalyse(new PersonAnalyse(e.entities.person)));
+            if(e.entities.location != null)
             out.collect(value.addAnalyse(new LocationAnalyse(e.entities.location)));
-            out.collect(value.addAnalyse(new OrganizationAnalyse(e.entities.organization)));
+            if(e.entities.organization != null)
+                out.collect(value.addAnalyse(new OrganizationAnalyse(e.entities.organization)));
         }catch (Exception e) {
             //value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
             //return value.addAnalyse(new PersoAnalyse("Error: " + e.getMessage()));

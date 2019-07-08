@@ -15,7 +15,8 @@ public class CharCountAnalyseMapFunction implements MapFunction<Tweet, Analyse>{
 	public Analyse map(Tweet value) throws Exception {
 		HashMap<Character, Integer> counter = new HashMap<Character, Integer>();
 		for (char c : value.getText().toCharArray()) {
-			counter.put(c, (counter.containsKey(c)) ? counter.get(c) + 1 : 1);
+			if(c >= 'A' && c <= 'z')
+				counter.put(c, (counter.containsKey(c)) ? counter.get(c) + 1 : 1);
 		}
 		
 		
