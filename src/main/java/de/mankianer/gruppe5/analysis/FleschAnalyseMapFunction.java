@@ -16,6 +16,11 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * FleschAnalyse
+ * @author sysadmin
+ *
+ */
 public class FleschAnalyseMapFunction implements MapFunction<Tweet, Analyse> {
     @Override
 

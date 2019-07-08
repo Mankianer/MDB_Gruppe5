@@ -9,6 +9,12 @@ import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.CharCountAnalyse;
 import de.mankianer.gruppe5.model.analyse.WordCountAnalyse;
 
+/**
+ * Funktion zum Zählen von Buchstarben
+ * 
+ * @author Marvin Wölk
+ *
+ */
 public class CharCountAnalyseMapFunction implements MapFunction<Tweet, Analyse>{
 
 	@Override

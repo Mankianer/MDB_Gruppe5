@@ -6,6 +6,11 @@ import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.WordCountAnalyse;
 
+/**
+ * Zählt die Wörter
+ * @author Marvin Wölk
+ *
+ */
 public class WordCountAnalyseMapFunction implements MapFunction<Tweet, Analyse>{
 
 	@Override

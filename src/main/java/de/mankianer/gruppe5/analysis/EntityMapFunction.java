@@ -21,6 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Analyse nach erwähnten enthalten
+ * @author 
+ *
+ */
 public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
     @Override
     public void flatMap(Tweet value, Collector<Analyse> out) throws Exception {

@@ -21,6 +21,15 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
 
+/**
+ * Baut ein Stream aus einem String Stream
+ * Es werden Analysen pro Runde hinzugefügt
+ * je Runde werden Analysen "gleichzeitig" durch geführt
+ * jede Runde kann eine Warte Zeit gegeben werden
+ * Es werden FlatMapFunction und MapFunction als Analyse erwartet
+ * @author Marvin Wölk
+ *
+ */
 public class AnalyseStreamBuilder {
 
 	private DataStream<Tweet> inPutStream;
@@ -33,6 +42,11 @@ public class AnalyseStreamBuilder {
 
 	private HashMap<Integer, Time> timeTurnMap;
 
+	/**
+	 * Erzeug neue Instance
+	 * @param inPutStream 
+	 * @return neuer AnaylseStreamBuilder
+	 */
 	public static AnalyseStreamBuilder getOfStringStream(DataStream<String> inPutStream) {
 		return new AnalyseStreamBuilder(inPutStream.flatMap(new StringToTweetFlatMapFunction()));
 	}
@@ -45,6 +59,11 @@ public class AnalyseStreamBuilder {
 		defaultTime = Time.seconds(5);
 	}
 
+	/**
+	 * Baut stream zusammen 
+	 * FlatMapFunction werden nach den MapFunkction aufgerufen
+	 * @return
+	 */
 	public DataStream<Tweet> build() {
 		DataStream<Tweet>[] tweetStream = new DataStream[] { inPutStream };
 
@@ -94,12 +113,24 @@ public class AnalyseStreamBuilder {
 		return in.map(new LengthAnalyseMapFunction());
 	}
 
+	/**
+	 * 
+	 * @param turn
+	 * @param time WarteZeit für Runde
+	 * @return
+	 */
 	public AnalyseStreamBuilder setTurnTime(int turn, Time time) {
 		timeTurnMap.put(turn, time);
 
 		return this;
 	}
 
+	/**
+	 * Fügt eine oder mehrere Analysen hinzu
+	 * @param turn
+	 * @param analysen
+	 * @return
+	 */
 	public AnalyseStreamBuilder addAnalyse(int turn, MapFunction<Tweet, Analyse>... analysen) {
 		for (MapFunction<Tweet, Analyse> analyse : analysen) {
 

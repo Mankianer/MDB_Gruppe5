@@ -24,6 +24,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classifizierung nach iptc-subjectcode
+ * 
+ * @author 
+ *
+ */
 public class ClassificationMapAnalyse implements FlatMapFunction<Tweet, Analyse> {
     @Override
     public void flatMap(Tweet value,Collector<Analyse> out) throws Exception {

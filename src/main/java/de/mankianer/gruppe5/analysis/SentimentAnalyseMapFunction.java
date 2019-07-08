@@ -27,7 +27,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Sentiment-Analyse
+ * @author sysadmin
+ *
+ */
 public class SentimentAnalyseMapFunction implements FlatMapFunction<Tweet, Analyse> {
     @Override
     //APP ID: f8e5c5f6

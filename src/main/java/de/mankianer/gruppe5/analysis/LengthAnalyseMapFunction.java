@@ -8,6 +8,12 @@ import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.LengthAnalyse;
 
+/**
+ * Analyse zur Länge des Textes
+ * 
+ * @author Marvin Wölk
+ *
+ */
 public class LengthAnalyseMapFunction implements MapFunction<Tweet, Analyse>
 {
 	private static final long serialVersionUID = 1L;

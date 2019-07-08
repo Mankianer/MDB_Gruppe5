@@ -12,6 +12,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * Analyse nach Namen
+ * @author sysadmin
+ *
+ */
 public class NameMapFunction implements MapFunction<Tweet, Analyse> {
     @Override
     public Analyse map(Tweet value) throws Exception {
