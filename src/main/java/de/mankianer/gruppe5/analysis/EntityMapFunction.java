@@ -1,13 +1,12 @@
 package de.mankianer.gruppe5.analysis;
 
-import com.aylien.textapi.responses.Sentiment;
 import com.google.gson.Gson;
 import de.mankianer.gruppe5.analyse.entity.Entity;
 import de.mankianer.gruppe5.model.Tweet;
-import de.mankianer.gruppe5.model.analyse.Analyse;
-import de.mankianer.gruppe5.model.analyse.EntityAnalyse;
-import de.mankianer.gruppe5.model.analyse.SentimentAnalyse;
+import de.mankianer.gruppe5.model.analyse.*;
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.util.Collector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,11 +18,12 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class EntityMapFunction implements MapFunction<Tweet, Analyse> {
+public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
     @Override
-    public Analyse map(Tweet value) throws Exception {
+    public void flatMap(Tweet value, Collector<Analyse> out) throws Exception {
 
         String text = value.getText();
         final String urlString = "https://api.aylien.com/api/v1/entities";
@@ -62,10 +62,12 @@ public class EntityMapFunction implements MapFunction<Tweet, Analyse> {
         try {
             Entity e = gson.fromJson(jsonString, Entity.class);
             String[][] entities = {e.entities.location, e.entities.organization, e.entities.person};
-            System.out.println(e);
-            return value.addAnalyse(new EntityAnalyse(entities));
+            //System.out.println(Arrays.deepToString(entities));
+            out.collect(value.addAnalyse(new PersonAnalyse(e.entities.person)));
+            out.collect(value.addAnalyse(new LocationAnalyse(e.entities.location)));
+            out.collect(value.addAnalyse(new OrganizationAnalyse(e.entities.organization)));
         }catch (Exception e) {
-            return value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
+            //value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
         }
     }
 }
