@@ -44,7 +44,7 @@ public class Tweet implements Serializable{
 	
 	private Map<String, Analyse> analysen;
 	
-	private Map<String, Analyse> getAnalysen(){
+	public Map<String, Analyse> getAnalysen(){
 		return analysen = (analysen == null ? new HashMap<String, Analyse>() : analysen);
 	}
 	

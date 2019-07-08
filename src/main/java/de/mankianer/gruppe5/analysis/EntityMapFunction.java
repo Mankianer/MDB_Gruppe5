@@ -68,6 +68,7 @@ public class EntityMapFunction implements FlatMapFunction<Tweet, Analyse> {
             out.collect(value.addAnalyse(new OrganizationAnalyse(e.entities.organization)));
         }catch (Exception e) {
             //value.addAnalyse(new SentimentAnalyse("Error: " + e.getMessage()));
+            //return value.addAnalyse(new PersoAnalyse("Error: " + e.getMessage()));
         }
     }
 }
