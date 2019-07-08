@@ -9,6 +9,8 @@ import org.apache.flink.util.Collector;
 import com.google.gson.Gson;
 
 import de.mankianer.gruppe5.model.Tweet;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import scala.collection.parallel.ParIterableLike.FlatMap;
 
 public class StringToTweetFlatMapFunction implements FlatMapFunction<String, Tweet> {
