@@ -12,7 +12,9 @@ public class TweetToAnalyseFlatMapFunction implements FlatMapFunction<Tweet, Map
 
 	@Override
 	public void flatMap(Tweet value, Collector<Map<String,Analyse>> out) throws Exception {
-		out.collect(value.getAnalysen());
+		if(!value.getAnalysen().isEmpty()) {
+			out.collect(value.getAnalysen());
+		}
 	}
 
 }

@@ -7,7 +7,10 @@ import de.mankianer.gruppe5.model.Tweet;
 import de.mankianer.gruppe5.model.analyse.Analyse;
 import de.mankianer.gruppe5.model.analyse.ClassificationAnalyse;
 import de.mankianer.gruppe5.model.analyse.SentimentAnalyse;
+
+import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
+import org.apache.flink.util.Collector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -21,9 +24,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassificationMapAnalyse implements MapFunction<Tweet, Analyse> {
+public class ClassificationMapAnalyse implements FlatMapFunction<Tweet, Analyse> {
     @Override
-    public Analyse map(Tweet value) throws Exception {
+    public void flatMap(Tweet value,Collector<Analyse> out) throws Exception {
         String text = value.getText();
 
         //Als Taxonomie IPTC Subject Code, haeufig benutzt fuer News und Blogposts
@@ -64,9 +67,8 @@ public class ClassificationMapAnalyse implements MapFunction<Tweet, Analyse> {
         System.out.println(jsonString);
         try {
         	Classification clas = gson.fromJson(jsonString, Classification.class);
-        	return value.addAnalyse(new ClassificationAnalyse(clas.getLabelsArr()));
+        	out.collect(value.addAnalyse(new ClassificationAnalyse(clas.getLabelsArr())));
         }catch (Exception e) {
-        	return value.addAnalyse(new ClassificationAnalyse("Error: "+e.getMessage()));
 		}
     }
 }

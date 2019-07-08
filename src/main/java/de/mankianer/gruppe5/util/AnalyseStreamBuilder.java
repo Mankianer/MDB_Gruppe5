@@ -42,7 +42,7 @@ public class AnalyseStreamBuilder {
 		analysenTurnMap = new TreeMap<>();
 		analysenTurnMap2 = new TreeMap<>();
 		timeTurnMap = new HashMap<>();
-		defaultTime = Time.seconds(10);
+		defaultTime = Time.seconds(5);
 	}
 
 	public DataStream<Tweet> build() {
@@ -60,7 +60,7 @@ public class AnalyseStreamBuilder {
 			DataStream<Tweet> analysenAsTweetStream = addAnalysenToStream(tweetStream[0],
 					e.getValue().toArray(new FlatMapFunction[0])).map(new AnalyseToTweetMap());
 
-			tweetStream[0] = analysenAsTweetStream.union(inPutStream).keyBy(new TweetKeySelector())
+			tweetStream[0] = analysenAsTweetStream.union(tweetStream[0]).keyBy(new TweetKeySelector())
 					.timeWindow(timeTurnMap.getOrDefault(e.getKey(), defaultTime)).reduce(Tweet::reduce);
 		});
 		
